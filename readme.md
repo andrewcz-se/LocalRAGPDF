@@ -11,7 +11,7 @@ The project features a basic **context-aware ingestion pipeline** designed to ha
 * **Intelligent State Management:** Uses MD5 hashing to track file changes. Only new or modified PDFs are processed, significantly reducing ingestion time for large libraries.  
 * **Advanced Retrieval (MMR):** Implements **Maximal Marginal Relevance (MMR)** to fetch diverse context chunks, reducing redundancy in the information provided to the LLM.  
 * **Database Inspector:** A built-in web interface to browse the raw chunks, metadata (page numbers, sections), and IDs stored in your ChromaDB.  
-* **Context-Aware Chunking:** Intelligently injects file and section headers into *every* individual text chunk, ensuring the LLM never loses track of what it is reading (even in the middle of long lists).  
+* **Context-Aware Chunking:** Adds file and section headers into *every* individual text chunk, ensuring the LLM never loses track of what it is reading (even in the middle of long lists).  
 * **Layout Analysis:** Uses pdfminer to visually inspect font sizes and boldness to detect document structure (headers vs. body text) and filters out noise like page numbers and running footers.  
 * **Strict Factual Prompting:** System prompt designed to prevent the model from "waffling" or explaining its search process, while encouraging detailed answers for ambiguous terms (e.g., "Puma" the car vs. "Puma" the animal).  
 
@@ -83,5 +83,6 @@ The application behavior is controlled via environment variables in docker-compo
 * ingested_state.json: A state file tracking file hashes to manage sync operations.  
 * chroma_data/: The directory where the persistent vector database is stored.  
 * pdfs/: The target directory for document ingestion.
+* requirements.txt: Contains the specific versions of each package used in this project. Designed to specifically be lightweight for text based PDFs (no OCR, images etc)
 
 
