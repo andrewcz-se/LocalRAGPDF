@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # Request all available GPUs
+              capabilities: [gpu]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+
+  rag_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_app
+    depends_on:
+      ollama:
+        condition: service_started
+    ports:
+      - "5000:5000"  # <--- Expose Flask Port
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - ./pdfs:/app/pdfs
+      - ./chroma_data:/app/chroma_data
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - EMBED_MODEL=nomic-embed-text
+      - LLM_MODEL=qwen3:4b
+      - PYTHONUNBUFFERED=1
+    command: ["python", "app/main.py"]
+
+volumes:
+  ollama_data:
